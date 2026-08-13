@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | SmartCity</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="auth-page">
+
+    <div class="auth-left">
+
+        <div class="logo">🏙️ SmartCity</div>
+
+        <h1>Making your city<br>better, together.</h1>
+
+        <p>
+            Report civic issues, track complaints and help
+            create a cleaner, safer and smarter city.
+        </p>
+
+        <div class="city-features">
+            <div class="feature">📍 Easy Reporting</div>
+            <div class="feature">🤖 AI Classification</div>
+            <div class="feature">📊 Real-time Tracking</div>
+        </div>
+
+    </div>
+
+    <div class="auth-right">
+
+        <div class="auth-box">
+
+            <h2>Welcome back</h2>
+
+            <p class="auth-subtitle">
+                Login to access your SmartCity dashboard.
+            </p>
+
+            <form id="loginForm">
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Email address"
+                    required>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    required>
+
+                <button type="submit" class="primary-btn">
+                    Login to Dashboard
+                </button>
+
+            </form>
+
+            <p id="message"></p>
+
+            <p class="auth-link">
+                Don't have an account?
+                <a href="register.html">Create an account</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+document
+    .getElementById("loginForm")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const user = {
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value
+        };
+
+        try {
+
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+
+                localStorage.setItem("userId", result.userId);
+                localStorage.setItem("role", result.role);
+
+                if (result.role === "Admin") {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "citizen.html";
+                }
+
+            } else {
+
+                document.getElementById("message").innerText =
+                    result.message || "Invalid email or password.";
+
+            }
+
+        } catch (error) {
+
+            document.getElementById("message").innerText =
+                "Unable to connect to the server.";
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

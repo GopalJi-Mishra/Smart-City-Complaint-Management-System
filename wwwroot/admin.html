@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | SmartCity</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            🏙️ Smart<span>City</span>
+        </div>
+
+        <div class="nav-title">Administration</div>
+
+        <a href="#" class="nav-item active">
+            📊 Dashboard
+        </a>
+
+        <a href="#complaintsSection" class="nav-item">
+            📋 All Complaints
+        </a>
+
+        <div class="nav-title">System</div>
+
+        <a href="#" class="nav-item">
+            ⚙️ Settings
+        </a>
+
+        <a
+            href="index.html"
+            class="nav-item logout"
+            onclick="localStorage.clear()">
+            🚪 Logout
+        </a>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <div class="topbar">
+
+            <div>
+                <h1>Admin Dashboard</h1>
+                <p>Monitor and manage citizen complaints.</p>
+            </div>
+
+            <div class="user-badge">
+                <div class="avatar">A</div>
+                <span>Administrator</span>
+            </div>
+
+        </div>
+
+
+        <!-- Statistics -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="icon">📋</div>
+
+                <h3 id="totalComplaints">0</h3>
+
+                <p>Total Complaints</p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="icon">⏳</div>
+
+                <h3 id="pendingComplaints">0</h3>
+
+                <p>Pending / In Progress</p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="icon">✓</div>
+
+                <h3 id="resolvedComplaints">0</h3>
+
+                <p>Resolved</p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Complaints -->
+
+        <div class="content-card" id="complaintsSection">
+
+            <h2>Complaint Management</h2>
+
+            <p class="card-subtitle">
+                Review complaints, assign departments and update their status.
+            </p>
+
+            <div id="complaints" class="complaint-list"></div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+/* =========================
+   ADMIN ACCESS CHECK
+========================= */
+
+const role = localStorage.getItem("role");
+
+if (role !== "Admin") {
+
+    alert("Access denied");
+
+    window.location.href = "login.html";
+
+}
+
+
+/* =========================
+   LOAD COMPLAINTS
+========================= */
+
+async function loadComplaints() {
+
+    try {
+
+        const response =
+            await fetch("/api/complaints");
+
+
+        if (!response.ok) {
+
+            throw new Error("Failed to load complaints");
+
+        }
+
+
+        const complaints =
+            await response.json();
+
+
+        const container =
+            document.getElementById("complaints");
+
+
+        container.innerHTML = "";
+
+
+        let pending = 0;
+        let resolved = 0;
+
+
+        complaints.forEach(complaint => {
+
+
+            if (complaint.status === "Resolved") {
+
+                resolved++;
+
+            }
+            else {
+
+                pending++;
+
+            }
+
+
+            /* Priority */
+
+            let priorityClass = "badge-low";
+
+            if (complaint.priority === "High") {
+
+                priorityClass = "badge-high";
+
+            }
+            else if (complaint.priority === "Medium") {
+
+                priorityClass = "badge-medium";
+
+            }
+
+
+            /* Status */
+
+            let statusClass = "badge-pending";
+
+            if (complaint.status === "In Progress") {
+
+                statusClass = "badge-progress";
+
+            }
+            else if (complaint.status === "Resolved") {
+
+                statusClass = "badge-resolved";
+
+            }
+
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                "complaint-card";
+
+
+            card.innerHTML = `
+
+                <div class="complaint-header">
+
+                    <div>
+
+                        <h3>
+                            ${complaint.description}
+                        </h3>
+
+                    </div>
+
+                    <span class="badge ${priorityClass}">
+                        ${complaint.priority || "Low"} Priority
+                    </span>
+
+                </div>
+
+
+                <div class="complaint-info">
+
+                    <span>
+                        📍 ${complaint.location}
+                    </span>
+
+                    <span>
+                        🏷️ ${complaint.category || "Other"}
+                    </span>
+
+                    <span>
+                        🏢 ${complaint.department || "Not Assigned"}
+                    </span>
+
+                </div>
+
+
+                <div class="complaint-meta">
+
+                    <span class="badge ${statusClass}">
+                        ${complaint.status || "Pending"}
+                    </span>
+
+                </div>
+
+
+                <div class="admin-control">
+
+                    <label>
+                        Department
+                    </label>
+
+                    <select
+                        onchange="assignDepartment(${complaint.id}, this.value)">
+
+                        <option value="">
+                            Select Department
+                        </option>
+
+                        <option value="Road Department">
+                            Road Department
+                        </option>
+
+                        <option value="Water Department">
+                            Water Department
+                        </option>
+
+                        <option value="Electricity Department">
+                            Electricity Department
+                        </option>
+
+                        <option value="Sanitation Department">
+                            Sanitation Department
+                        </option>
+
+                    </select>
+
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select
+                        onchange="updateStatus(${complaint.id}, this.value)">
+
+                        <option value="Pending">
+                            Pending
+                        </option>
+
+                        <option value="In Progress">
+                            In Progress
+                        </option>
+
+                        <option value="Resolved">
+                            Resolved
+                        </option>
+
+                    </select>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(card);
+
+        });
+
+
+        document.getElementById("totalComplaints").innerText =
+            complaints.length;
+
+
+        document.getElementById("pendingComplaints").innerText =
+            pending;
+
+
+        document.getElementById("resolvedComplaints").innerText =
+            resolved;
+
+
+        if (complaints.length === 0) {
+
+            container.innerHTML = `
+
+                <div class="complaint-card">
+
+                    <h3>No complaints available</h3>
+
+                    <p class="card-subtitle">
+                        New citizen complaints will appear here.
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+
+    }
+    catch (error) {
+
+        document.getElementById("complaints").innerHTML = `
+
+            <div class="complaint-card">
+
+                <h3>Unable to load complaints</h3>
+
+                <p class="card-subtitle">
+                    Please make sure the backend is running.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================
+   ASSIGN DEPARTMENT
+========================= */
+
+async function assignDepartment(id, department) {
+
+    if (!department) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/complaints/${id}/department?department=${encodeURIComponent(department)}`,
+                {
+                    method: "PUT"
+                }
+            );
+
+
+        if (response.ok) {
+
+            loadComplaints();
+
+        }
+        else {
+
+            alert("Failed to assign department.");
+
+        }
+
+    }
+    catch (error) {
+
+        alert("Unable to connect to server.");
+
+    }
+
+}
+
+
+/* =========================
+   UPDATE STATUS
+========================= */
+
+async function updateStatus(id, status) {
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/complaints/${id}/status?status=${encodeURIComponent(status)}`,
+                {
+                    method: "PUT"
+                }
+            );
+
+
+        if (response.ok) {
+
+            loadComplaints();
+
+        }
+        else {
+
+            alert("Failed to update status.");
+
+        }
+
+    }
+    catch (error) {
+
+        alert("Unable to connect to server.");
+
+    }
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadComplaints();
+
+</script>
+
+</body>
+</html>

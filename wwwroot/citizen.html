@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Citizen Dashboard | SmartCity</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            🏙️ Smart<span>City</span>
+        </div>
+
+        <div class="nav-title">Menu</div>
+
+        <a href="#" class="nav-item active">
+            📊 Dashboard
+        </a>
+
+        <a href="#complaintsSection" class="nav-item">
+            📋 My Complaints
+        </a>
+
+        <div class="nav-title">Account</div>
+
+        <a href="#" class="nav-item">
+            👤 Profile
+        </a>
+
+        <a
+            href="index.html"
+            class="nav-item logout"
+            onclick="localStorage.clear()">
+            🚪 Logout
+        </a>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <div class="topbar">
+
+            <div>
+                <h1>Citizen Dashboard</h1>
+
+                <p>
+                    Report and track issues in your city.
+                </p>
+            </div>
+
+            <div class="user-badge">
+
+                <div class="avatar">
+                    C
+                </div>
+
+                <span>Citizen</span>
+
+            </div>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="icon">
+                    📋
+                </div>
+
+                <h3 id="totalComplaints">
+                    0
+                </h3>
+
+                <p>
+                    Total Complaints
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="icon">
+                    ⏳
+                </div>
+
+                <h3 id="pendingComplaints">
+                    0
+                </h3>
+
+                <p>
+                    Pending
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="icon">
+                    ✓
+                </div>
+
+                <h3 id="resolvedComplaints">
+                    0
+                </h3>
+
+                <p>
+                    Resolved
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- REPORT COMPLAINT -->
+
+        <div class="content-card">
+
+            <h2>
+                Report a City Issue
+            </h2>
+
+            <p class="card-subtitle">
+                Describe the problem and optionally upload a photo.
+                Our AI will analyze the complaint.
+            </p>
+
+
+            <form
+                id="complaintForm"
+                class="complaint-form">
+
+
+                <textarea
+                    id="description"
+                    placeholder="Describe the issue... For example: There is a large pothole on the main road."
+                    required></textarea>
+
+
+                <input
+                    type="text"
+                    id="location"
+                    placeholder="📍 Enter location"
+                    required>
+
+
+                <label for="image">
+                    📷 Upload a photo
+                </label>
+
+
+                <input
+                    type="file"
+                    id="image"
+                    accept="image/png,image/jpeg,image/jpg">
+
+
+                <button
+                    type="submit"
+                    class="primary-btn">
+
+                    Submit Complaint
+
+                </button>
+
+            </form>
+
+
+            <p id="message"></p>
+
+        </div>
+
+
+        <!-- MY COMPLAINTS -->
+
+        <div
+            class="content-card"
+            id="complaintsSection">
+
+            <h2>
+                My Complaints
+            </h2>
+
+            <p class="card-subtitle">
+                Track the status of complaints you have submitted.
+            </p>
+
+
+            <div
+                id="complaints"
+                class="complaint-list">
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+
+/* =================================
+   SUBMIT COMPLAINT
+================================= */
+
+async function submitComplaint(event) {
+
+    event.preventDefault();
+
+
+    const userId =
+        localStorage.getItem("userId");
+
+
+    const description =
+        document.getElementById("description").value;
+
+
+    const location =
+        document.getElementById("location").value;
+
+
+    const image =
+        document.getElementById("image").files[0];
+
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "description",
+        description
+    );
+
+
+    formData.append(
+        "location",
+        location
+    );
+
+
+    formData.append(
+        "userId",
+        userId
+    );
+
+
+    if (image) {
+
+        formData.append(
+            "image",
+            image
+        );
+
+    }
+
+
+    const message =
+        document.getElementById("message");
+
+
+    message.innerText =
+        "Analyzing your complaint with AI...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/complaints",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (response.ok) {
+
+            message.innerText =
+                "✓ Complaint submitted successfully.";
+
+            document
+                .getElementById("complaintForm")
+                .reset();
+
+            loadComplaints();
+
+        }
+        else {
+
+            message.innerText =
+                result.message ||
+                "Failed to submit complaint.";
+
+        }
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        message.innerText =
+            "Unable to connect to the server.";
+
+    }
+
+}
+
+
+/* =================================
+   LOAD COMPLAINTS
+================================= */
+
+async function loadComplaints() {
+
+    const userId =
+        localStorage.getItem("userId");
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/complaints?userId=${userId}`
+            );
+
+
+        const complaints =
+            await response.json();
+
+
+        const container =
+            document.getElementById("complaints");
+
+
+        container.innerHTML = "";
+
+
+        let pending = 0;
+
+        let resolved = 0;
+
+
+        complaints.forEach(complaint => {
+
+
+            /* STATUS COUNT */
+
+            if (complaint.status === "Resolved") {
+
+                resolved++;
+
+            }
+            else {
+
+                pending++;
+
+            }
+
+
+            /* PRIORITY */
+
+            let priorityClass =
+                "badge-low";
+
+
+            if (complaint.priority === "High") {
+
+                priorityClass =
+                    "badge-high";
+
+            }
+            else if (complaint.priority === "Medium") {
+
+                priorityClass =
+                    "badge-medium";
+
+            }
+
+
+            /* STATUS */
+
+            let statusClass =
+                "badge-pending";
+
+
+            if (complaint.status === "In Progress") {
+
+                statusClass =
+                    "badge-progress";
+
+            }
+            else if (complaint.status === "Resolved") {
+
+                statusClass =
+                    "badge-resolved";
+
+            }
+
+
+            /* COMPLAINT CARD */
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                "complaint-card";
+
+
+            card.innerHTML = `
+
+                <div class="complaint-header">
+
+                    <div>
+
+                        <h3>
+                            ${complaint.description}
+                        </h3>
+
+                    </div>
+
+
+                    <span class="badge ${priorityClass}">
+                        ${complaint.priority || "Low"} Priority
+                    </span>
+
+                </div>
+
+
+                <div class="complaint-info">
+
+                    <span>
+                        📍 ${complaint.location}
+                    </span>
+
+                    <span>
+                        🏷️ ${complaint.category || "Other"}
+                    </span>
+
+                    <span>
+                        🏢 ${complaint.department || "Not Assigned"}
+                    </span>
+
+                </div>
+
+
+                <div class="complaint-meta">
+
+                    <span class="badge ${statusClass}">
+                        ${complaint.status || "Pending"}
+                    </span>
+
+                </div>
+
+
+                <div class="ai-analysis">
+
+                    <strong>
+                        🤖 AI Analysis
+                    </strong>
+
+                    <pre>${complaint.aiAnalysis || "No AI analysis available."}</pre>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(card);
+
+        });
+
+
+        /* STATISTICS */
+
+        document.getElementById(
+            "totalComplaints"
+        ).innerText =
+            complaints.length;
+
+
+        document.getElementById(
+            "pendingComplaints"
+        ).innerText =
+            pending;
+
+
+        document.getElementById(
+            "resolvedComplaints"
+        ).innerText =
+            resolved;
+
+
+        /* NO COMPLAINTS */
+
+        if (complaints.length === 0) {
+
+            container.innerHTML = `
+
+                <div class="complaint-card">
+
+                    <h3>
+                        No complaints yet
+                    </h3>
+
+                    <p class="card-subtitle">
+                        Your submitted complaints
+                        will appear here.
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "complaints"
+        ).innerText =
+            "Could not load complaints.";
+
+    }
+
+}
+
+
+/* =================================
+   FORM SUBMIT
+================================= */
+
+document
+    .getElementById("complaintForm")
+    .addEventListener(
+        "submit",
+        submitComplaint
+    );
+
+
+/* =================================
+   INITIAL LOAD
+================================= */
+
+loadComplaints();
+
+</script>
+
+
+</body>
+
+</html>

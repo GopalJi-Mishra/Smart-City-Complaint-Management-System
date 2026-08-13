@@ -1,0 +1,6 @@
+@SmartCityComplaint_HostAddress = http://localhost:5287
+
+GET {{SmartCityComplaint_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

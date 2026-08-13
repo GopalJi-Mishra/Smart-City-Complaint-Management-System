@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | SmartCity</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="auth-page">
+
+    <div class="auth-left">
+
+        <div class="logo">🏙️ SmartCity</div>
+
+        <h1>Be part of a<br>smarter city.</h1>
+
+        <p>
+            Create your account and help improve your
+            community by reporting and tracking civic issues.
+        </p>
+
+        <div class="city-features">
+            <div class="feature">🏙️ Smart Governance</div>
+            <div class="feature">🤖 AI Powered</div>
+            <div class="feature">📍 Complaint Tracking</div>
+        </div>
+
+    </div>
+
+    <div class="auth-right">
+
+        <div class="auth-box">
+
+            <h2>Create account</h2>
+
+            <p class="auth-subtitle">
+                Register to start using SmartCity.
+            </p>
+
+            <form id="registerForm">
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Full name"
+                    required>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Email address"
+                    required>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    required>
+
+                <select id="role">
+                    <option value="Citizen">Citizen</option>
+                    <option value="Admin">Admin</option>
+                </select>
+
+                <button type="submit" class="primary-btn">
+                    Create Account
+                </button>
+
+            </form>
+
+            <p id="message"></p>
+
+            <p class="auth-link">
+                Already have an account?
+                <a href="login.html">Login here</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+document
+    .getElementById("registerForm")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const user = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            role: document.getElementById("role").value
+        };
+
+        try {
+
+            const response = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            });
+
+            const result = await response.text();
+
+            document.getElementById("message").innerText = result;
+
+            if (response.ok) {
+
+                document.getElementById("registerForm").reset();
+
+                setTimeout(() => {
+                    window.location.href = "login.html";
+                }, 1000);
+            }
+
+        } catch (error) {
+
+            document.getElementById("message").innerText =
+                "Unable to connect to the server.";
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
