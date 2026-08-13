@@ -40,7 +40,7 @@ public class ComplaintsController : ControllerBase
         }
 
 
-        // Send complaint text + image to Gemini
+        // Gemini analyzes complaint text and optional image
         string aiResult =
             await _geminiService.AnalyzeComplaint(
                 description,
@@ -48,42 +48,12 @@ public class ComplaintsController : ControllerBase
             );
 
 
-        // Default values
-        string category = "Other";
-        string priority = "Low";
+        // Extract category and priority from AI result
+        string category = ExtractCategory(aiResult);
+
+        string priority = ExtractPriority(aiResult);
 
 
-        // AI Category
-        if (aiResult.Contains("Category: Road"))
-        {
-            category = "Road";
-        }
-        else if (aiResult.Contains("Category: Water"))
-        {
-            category = "Water";
-        }
-        else if (aiResult.Contains("Category: Electricity"))
-        {
-            category = "Electricity";
-        }
-        else if (aiResult.Contains("Category: Garbage"))
-        {
-            category = "Garbage";
-        }
-
-
-        // AI Priority
-        if (aiResult.Contains("Priority: High"))
-        {
-            priority = "High";
-        }
-        else if (aiResult.Contains("Priority: Medium"))
-        {
-            priority = "Medium";
-        }
-
-
-        // Create complaint
         var complaint = new Complaint
         {
             Description = description,
@@ -183,10 +153,65 @@ public class ComplaintsController : ControllerBase
     {
         string result =
             await _geminiService.AnalyzeComplaint(
-                "There is a large pothole on the main road."
+                "There is a broken traffic signal at a busy intersection."
             );
 
-
         return Ok(result);
+    }
+
+
+    // EXTRACT CATEGORY
+    private string ExtractCategory(string aiResult)
+    {
+        foreach (string line in aiResult.Split('\n'))
+        {
+            string trimmedLine = line.Trim();
+
+            if (trimmedLine.StartsWith("Category:", StringComparison.OrdinalIgnoreCase))
+            {
+                string category =
+                    trimmedLine.Substring("Category:".Length).Trim();
+
+                if (!string.IsNullOrWhiteSpace(category))
+                {
+                    return category;
+                }
+            }
+        }
+
+        return "Other";
+    }
+
+
+    // EXTRACT PRIORITY
+    private string ExtractPriority(string aiResult)
+    {
+        foreach (string line in aiResult.Split('\n'))
+        {
+            string trimmedLine = line.Trim();
+
+            if (trimmedLine.StartsWith("Priority:", StringComparison.OrdinalIgnoreCase))
+            {
+                string priority =
+                    trimmedLine.Substring("Priority:".Length).Trim();
+
+                if (priority.Equals("High", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "High";
+                }
+
+                if (priority.Equals("Medium", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "Medium";
+                }
+
+                if (priority.Equals("Low", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "Low";
+                }
+            }
+        }
+
+        return "Low";
     }
 }

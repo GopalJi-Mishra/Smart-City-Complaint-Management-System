@@ -1,5 +1,6 @@
 using Google.GenAI;
 using Google.GenAI.Types;
+using Microsoft.AspNetCore.Http;
 
 namespace SmartCityComplaint.Services;
 
@@ -17,27 +18,54 @@ public class GeminiService
         _client = new Client(apiKey: apiKey);
     }
 
-
     public async Task<string> AnalyzeComplaint(
         string description,
         IFormFile? image = null)
     {
         string prompt = $"""
-        Analyze this city complaint.
+        Analyze this civic complaint.
 
         Complaint:
         {description}
 
-        If an image is provided, inspect the image and use it
-        together with the complaint description.
+        If an image is provided, inspect it and use it together
+        with the complaint description.
+
+        Identify the most specific and practical civic issue category.
+        Do not restrict yourself to a fixed list.
+
+        Use a category that clearly helps an administrator decide
+        which department should handle the complaint.
+
+        Examples:
+        Road
+        Water Supply
+        Electricity
+        Garbage
+        Drainage
+        Traffic Signal
+        Fire & Emergency
+        Public Safety
+        Animal Control
+        Pollution
+        Public Transport
+        Streetlight
+        Other
+
+        For fire-related complaints, prefer "Fire & Emergency".
+        For traffic-signal complaints, prefer "Traffic Signal".
+        For potholes or damaged roads, prefer "Road".
+        For water leakage or supply issues, prefer "Water Supply".
+        For garbage or waste issues, prefer "Garbage".
+        For drainage problems, prefer "Drainage".
+        For streetlight problems, prefer "Streetlight".
 
         Return only:
 
         Detected Issue: [short description]
-        Category: [Road/Water/Electricity/Garbage/Other]
+        Category: [most specific civic issue category]
         Priority: [Low/Medium/High]
         """;
-
 
         var parts = new List<Part>
         {
@@ -46,7 +74,6 @@ public class GeminiService
                 Text = prompt
             }
         };
-
 
         if (image != null && image.Length > 0)
         {
@@ -66,7 +93,6 @@ public class GeminiService
             );
         }
 
-
         var contents = new List<Content>
         {
             new Content
@@ -76,13 +102,11 @@ public class GeminiService
             }
         };
 
-
         var response =
             await _client.Models.GenerateContentAsync(
                 model: "gemini-2.5-flash",
                 contents: contents
             );
-
 
         return response
             .Candidates?[0]
