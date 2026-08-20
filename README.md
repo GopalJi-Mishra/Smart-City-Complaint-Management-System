@@ -43,7 +43,7 @@ A web based complaint tracking system that allows citizens to report civic issue
 - Worked on **storing and retrieving complaint and user data** through the database context.
 - Worked with **Entity Framework Core migrations** for database schema management.
 - Contributed to the overall **SQL Server database and backend data management**.
-### <ins>[Sajjad] (IN26011480)</ins>
+### <ins>[Muhammed Sajjad] (IN26011480)</ins>
 - Worked on the frontend development of the Smart City Complaint Management System.
 - Developed the HTML pages within the wwwroot directory for the application's user interface.
 - Worked on the landing page, login page, and registration page.
