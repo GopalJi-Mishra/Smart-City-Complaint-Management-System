@@ -15,7 +15,7 @@ A web based complaint tracking system that allows citizens to report civic issue
 * Designed the prompt to generate practical complaint categories for proper department routing.
 * Integrated the AI generated result so that it is stored along with the complaint in **SQL Server**.
 
-- ### <u>**Abhijit Kumar Sharma (IN26011441)**</u>
+- ### <ins>**Abhijit Kumar Sharma (IN26011441)**</ins>
 
 - Worked on `AuthController.cs`.
 - Added user registration and login functionality.
