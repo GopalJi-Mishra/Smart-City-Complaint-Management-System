@@ -43,6 +43,16 @@ A web based complaint tracking system that allows citizens to report civic issue
 - Worked on **storing and retrieving complaint and user data** through the database context.
 - Worked with **Entity Framework Core migrations** for database schema management.
 - Contributed to the overall **SQL Server database and backend data management**.
+### <ins>[Sajjad] (IN26011480)</ins>
+- Worked on the frontend development of the Smart City Complaint Management System.
+- Developed the HTML pages within the wwwroot directory for the application's user interface.
+- Worked on the landing page, login page, and registration page.
+- Developed the Citizen Dashboard for submitting and tracking complaints.
+- Implemented complaint submission with description, location, and optional image upload.
+- Used JavaScript and the Fetch API to communicate with the ASP.NET Core backend.
+- Implemented dynamic display of complaint details, including category, priority, department, status, and AI analysis.
+- Developed the Admin Dashboard interface for viewing complaints, assigning departments, and updating complaint statuses.
+- Worked on the common CSS styling and responsive frontend layout across the application.
 
 ## Features
 
