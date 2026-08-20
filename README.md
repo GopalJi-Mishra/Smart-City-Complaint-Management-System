@@ -119,9 +119,7 @@ UserId identifies the citizen who submitted the complaint.
 
 ## Prerequisites
 
-Install:
-
-- .NET SDK
-- SQL Server Express or SQL Server
-- Git
-- Visual Studio Code or another C#/.NET IDE
+- Visual Studio — with ASP.NET and web development workload. Microsoft lists this workload as the prerequisite for ASP.NET Core Web API development.
+- .NET SDK — project is using .NET 10.
+- SQL Server Express — for storing users and complaints.
+- SQL Server Management Studio (SSMS) — to view and manage the database.
