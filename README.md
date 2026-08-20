@@ -15,7 +15,7 @@ A web based complaint tracking system that allows citizens to report civic issue
 * Designed the prompt to generate practical complaint categories for proper department routing.
 * Integrated the AI generated result so that it is stored along with the complaint in **SQL Server**.
 
-- ### <ins>**Abhijit Kumar Sharma (IN26011441)**</ins>
+### <ins>**Abhijit Kumar Sharma (IN26011441)**</ins>
 
 - Worked on `AuthController.cs`.
 - Added user registration and login functionality.
@@ -34,7 +34,7 @@ A web based complaint tracking system that allows citizens to report civic issue
 - Worked on validating incoming requests and returning appropriate API responses.
 - Contributed to the overall backend API functionality and request handling.
 
-- ### <ins>**[Alby John Benny] (IN26011618)**</ins>
+### <ins>**[Alby John Benny] (IN26011618)**</ins>
 
 - Worked on `Program.cs` and the **application startup configuration**.
 - Configured the ASP.NET Core Web API application and its services.
