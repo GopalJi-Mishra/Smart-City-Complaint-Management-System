@@ -2,6 +2,19 @@
 
 A web based complaint tracking system that allows citizens to report civic issues and track their status. The system uses Gemini AI to analyze complaint descriptions and optional images to identify the issue, category, and priority. Administrators can review complaints, assign departments, and update their status.
 
+## Members and their contribution
+- ### Gopal Ji Mishra (IN26009581)
+
+* Developed the **Gemini AI integration** using `GeminiService.cs`.
+* Integrated the Gemini API.
+* Implemented AI analysis of the **complaint description** and optional **uploaded image**.
+* Configured the AI to identify:
+  * **Detected Issue**
+  * **Category of Department**
+  * **Priority**
+* Designed the prompt to generate practical complaint categories for proper department routing.
+* Integrated the AI-generated result so that it is stored along with the complaint in **SQL Server**.
+
 ## Features
 
 - Citizen registration and login
@@ -74,27 +87,6 @@ Stores:
 - AIAnalysis
 
 UserId identifies the citizen who submitted the complaint.
-
-## AI Functionality
-
-Gemini AI analyzes:
-
-- Complaint description
-- Optional uploaded image
-
-It produces:
-
-- Detected Issue
-- Category
-- Priority
-
-For example:
-
-Detected Issue: Large pothole
-Category: Road
-Priority: High
-
-The AI result is then stored with the complaint in SQL Server.
 
 ## Prerequisites
 
