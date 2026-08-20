@@ -1,4 +1,4 @@
-# Smart City Complaint Tracking System
+# Smart City Complaint Management System
 
 A web based complaint tracking system that allows citizens to report civic issues and track their status. The system uses Gemini AI to analyze complaint descriptions and optional images to identify the issue, category, and priority. Administrators can review complaints, assign departments, and update their status.
 
