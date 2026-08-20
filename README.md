@@ -23,6 +23,17 @@ A web based complaint tracking system that allows citizens to report civic issue
 - Created the models needed for users and complaints.
 - Connected the authentication and model parts with the project.
 
+  ### <ins>[Vaishnav Sreekumar] (IN26010688)</ins>
+- Worked on the Controllers layer of the Smart City Complaint Management System.
+- Developed the API controllers responsible for handling HTTP requests and responses.
+- Implemented endpoints for user registration and login.
+- Implemented complaint-related API endpoints for creating and retrieving complaints.
+- Handled requests for assigning departments to complaints.
+- Implemented endpoints for updating complaint statuses.
+- Connected controller actions with the application's services and database layer.
+- Worked on validating incoming requests and returning appropriate API responses.
+- Contributed to the overall backend API functionality and request handling.
+
 - ### <ins>**[Alby John Benny] (IN26011618)**</ins>
 
 - Worked on `Program.cs` and the **application startup configuration**.
