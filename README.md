@@ -13,7 +13,7 @@ A web based complaint tracking system that allows citizens to report civic issue
   * **Category of Department**
   * **Priority**
 * Designed the prompt to generate practical complaint categories for proper department routing.
-* Integrated the AI-generated result so that it is stored along with the complaint in **SQL Server**.
+* Integrated the AI generated result so that it is stored along with the complaint in **SQL Server**.
 
 ## Features
 
