@@ -23,7 +23,7 @@ A web based complaint tracking system that allows citizens to report civic issue
 - Created the models needed for users and complaints.
 - Connected the authentication and model parts with the project.
 
-- * ### <ins>**[Alby John Benny] (IN26011618)**</ins>
+- ### <ins>**[Alby John Benny] (IN26011618)**</ins>
 
 - Worked on `Program.cs` and the **application startup configuration**.
 - Configured the ASP.NET Core Web API application and its services.
