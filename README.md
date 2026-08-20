@@ -34,7 +34,7 @@ A web based complaint tracking system that allows citizens to report civic issue
 - Configured API controllers and the application's middleware pipeline.
 - Worked on the overall **backend application setup and service dependency configuration**.
 
-### <ins>**[Vijay Krishna P M] (INR26011854)**</ins>
+### <ins>**[Vijay Krishna P M] (IN26011854)**</ins>
 
 - Worked on `ApplicationDbContext.cs` and the **database integration**.
 - Implemented **Entity Framework Core** for database operations.
